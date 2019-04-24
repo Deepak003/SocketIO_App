@@ -9,7 +9,9 @@
   "author": "Andrew Errity",
   "license": "ISC",
   "dependencies": {
+    "@types/socket.io-client": "^1.4.32",
     "express": "^4.15.2",
-    "socket.io": "^1.7.3"
+    "socket.io": "^1.7.3",
+    "socket.io-client": "^2.2.0"
   }
 }

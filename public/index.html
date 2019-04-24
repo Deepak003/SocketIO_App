@@ -3,20 +3,39 @@
    <head>
       <title>Socket.io Demo</title>
       <meta charset="utf-8">
-		<link rel="stylesheet" href="styles.css">
+	  <link rel="stylesheet" href="styles.css">
    </head>
    <body>
-		 <h1>Socket.io Demo</h1>	 
-		 <p id="buttonCount">The button has been clicked 0 times.</p>
-		 <button onclick="buttonClicked()">Click me</button>
+		<h1>Socket.io Demo</h1>	 
+		<p id="buttonCount">The button has been clicked 0 times.</p>
+		<button onclick="buttonClicked()">Add Connection</button>
+		<h1>My Table</h1>
+		<table border="1">
+			<tr>
+				<th>Server Stats</th>
+				<th>Value</th>
+			</tr>
+			<tr>
+				<td>Mode</td>
+				<td><div id="mode"></div></td>
+			</tr>
+			<tr>
+				<td>ORD</td>
+				<td>Chicago O'Hare</td>
+			</tr>
+			<tr>
+				<td>LHR</td>
+				<td>London Heathrow</td>
+			</tr>
+		</table>
+		</body>
+		</html>
 		 <script src="/socket.io/socket.io.js"></script>
 		 <script>
-			 var socket = io.connect();
-			 
+			 var socket = io.connect(); 
 			 function buttonClicked(){
-			   socket.emit('clicked');
+			   socket.emit('addConnection');
 			 }
-			 
 			 //when we receive numClients, do this
 			 socket.on('buttonUpdate', function(data){
 				 document.getElementById("buttonCount").innerHTML = 'The button has been clicked ' + data + ' times.';
