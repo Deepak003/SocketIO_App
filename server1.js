@@ -8,6 +8,11 @@ var io = require('socket.io')(server);
 var clickCount = 0;
 var msgfromServer1="";
 var msgfromServer1="";
+var currSate = "P A S S I V E";
+var clientState = "P A S S I V E";
+var startup =0;
+var firstStartUp=0;
+var outbox =0;
 app.use(express.static(__dirname + '/public')); 
 //redirect / to our index.html file
 app.get('/', function(req, res,next) {  
@@ -20,6 +25,8 @@ io.on('connection', function(client) {
 	client.on('clientEvent-3000', function (data) {   
 		msgfromServer2 ='[clientEvent-3000] [Inbox] :'+ data;
 		console.log(msgfromServer2);
+		
+		outbox = outbox -1;
     });
     client.on('addConnection', function(data) {
     	  clickCount++;
@@ -28,8 +35,27 @@ io.on('connection', function(client) {
     });
 	setInterval(function () {
 		var rndNum =Math.random();
+		startup = startup +1;
+		if(startup==1){
+		  rndNum= rndNum +" # Marking myself A C T I V E # ";
+		  currSate = "A C T I V E";
+		  clientState = "P A S S I V E";
+		}  
+	    else{
+		  rndNum= rndNum +" # I am "+currSate+" # "; 
+		}	
         client.emit('serverEvent-3001', rndNum);
-        console.log('[serverEvent-3001] [Sent ] :'+rndNum);
+        console.log('[serverEvent-3001] [Sent ] :'+rndNum+"[ Outbox: "+outbox+"]");
+		console.log("[server-3001-["+currSate+"] server-3000-["+clientState+"]");
+		
+		if(clientState!="O F F L I N E" && outbox > 1){
+		  currSate = "A C T I V E";
+		  clientState = "O F F L I N E";
+		  outbox=0;
+		}else{
+		  outbox = outbox + 1;	
+		  clientState = "P A S S I V E";
+		}	  	
     }, 6000);
 });
 
@@ -47,23 +73,15 @@ socket.on('connect', function () {
     //console.log('connected to localhost:3000');
     socket.on('serverEvent-3000', function (data) { 
         console.log("[serverEvent-3000] [Inbox] :"+data);	
+		if(data.indexOf("A C T I V E")>-1){
+			currSate = "P A S S I V E";
+			startup = startup +1;
+			if(startup==1){
+			  clientState = "A C T I V E";
+			}
+		}		
         msgfromServer1 = "thanks server(3000)! for '" + data + "'";	
-        socket.emit('clientEvent-3001',msgfromServer1);
-		console.log('[clientEvent-3001] [Sent ] :'+msgfromServer1);
-    });
-});
-
-var io2 = require('socket.io-client');
-var socket2 = io2.connect("http://localhost:3002/", {
-    reconnection: true
-});
-
-socket2.on('connect', function () {
-    //console.log('connected to localhost:3000');
-    socket2.on('serverEvent-3002', function (data) { 
-        console.log("[serverEvent-3002] [Inbox] :"+data);	
-        msgfromServer2 = "thanks server(3002)! for '" + data + "'";	
-        socket2.emit('clientEvent-3001/3002',msgfromServer2);
-		console.log('[clientEvent-3001/3002] [Sent ] :'+msgfromServer2);
+        socket.emit('clientEvent-3001',msgfromServer1.split("#")[0]);
+		console.log('[clientEvent-3001] [Sent ] :'+msgfromServer1.split("#")[0]);
     });
 });
