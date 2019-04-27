@@ -25,7 +25,6 @@ io.on('connection', function(client) {
 	client.on('clientEvent-3000', function (data) {   
 		msgfromServer2 ='[clientEvent-3000] [Inbox] :'+ data;
 		console.log(msgfromServer2);
-		
 		outbox = outbox -1;
     });
     client.on('addConnection', function(data) {
